@@ -14,50 +14,56 @@ Create a [bot integration](https://my.slack.com/services/new/bot) on Slack to ge
 
 Create a Command that can receive and send messages:
 
-	class EchoCommand : Command
+```csharp
+class EchoCommand : Command
+{
+	const string prefix = "echo ";
+
+	public override async Task OnMessage(Channel channel, User user, string text)
 	{
-		const string prefix = "echo ";
+		if (!text.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+			return;
 
-		public override async Task OnMessage(Channel channel, User user, string text)
-		{
-			if (!text.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-				return;
-
-			await SendMessage(channel, text.Substring(prefix.Length));
-		}
+		await SendMessage(channel, text.Substring(prefix.Length));
 	}
+}
+```
 	
 Connect the bot and register your command:
 
-	using (var bot = await Bot.Connect(token))
-	{
-		bot.RegisterCommand(new EchoCommand());
-		bot.RegisterCommand(new CountdownCommand());
+```csharp
+using (var bot = await Bot.Connect(token))
+{
+	bot.RegisterCommand(new EchoCommand());
+	bot.RegisterCommand(new CountdownCommand());
 
-		Console.WriteLine("Press a key to disconnect...");
-		Console.ReadKey();
-	}
+	Console.WriteLine("Press a key to disconnect...");
+	Console.ReadKey();
+}
+```
 	
 ## Command Cancellation
 
 It's possible to make your commands being cancelled. An optional `CancellationToken` can be used to signal cancellations when a user sends `abort`, `stop` or `cancel`:
 
-	class CountdownCommand : Command
+```csharp
+class CountdownCommand : Command
+{
+	public override async Task OnMessage(Channel channel, User user, string text, CancellationToken cancellationToken)
 	{
-		public override async Task OnMessage(Channel channel, User user, string text, CancellationToken cancellationToken)
+		if (!string.Equals(text, "countdown", StringComparison.OrdinalIgnoreCase))
+			return;
+
+		for (var i = 10; i > 0 && !cancellationToken.IsCancellationRequested; i--)
 		{
-			if (!string.Equals(text, "countdown", StringComparison.OrdinalIgnoreCase))
-				return;
-
-			for (var i = 10; i > 0 && !cancellationToken.IsCancellationRequested; i--)
-			{
-				await SendMessage(channel, $"{i}...");
-				await Task.Delay(1000);
-			}
-
-			if (!cancellationToken.IsCancellationRequested)
-				await SendMessage(channel, "Thunderbirds are go!");
-			else
-				await SendMessage(channel, "Countdown was aborted. Thunderbirds are cancelled, kids :(");
+			await SendMessage(channel, $"{i}...");
+			await Task.Delay(1000);
 		}
+
+		if (!cancellationToken.IsCancellationRequested)
+			await SendMessage(channel, "Thunderbirds are go!");
+		else
+			await SendMessage(channel, "Countdown was aborted. Thunderbirds are cancelled, kids :(");
 	}
+}
+```
