@@ -3,7 +3,7 @@
 namespace SimpleSlackBot.RestApi
 {
 	[DataContract]
-	class IM : Channel
+	public class IM : Channel
 	{
 	}
 }

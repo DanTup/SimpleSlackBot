@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace SimpleSlackBot.RestApi
 {
 	[DataContract]
-	class AuthTestResponse : Response
+	public class AuthTestResponse : Response
 	{
 		[DataMember(Name = "url")]
 		public Uri Url { get; private set;  }

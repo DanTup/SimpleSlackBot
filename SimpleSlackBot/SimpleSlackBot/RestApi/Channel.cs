@@ -3,7 +3,7 @@
 namespace SimpleSlackBot.RestApi
 {
 	[DataContract]
-	class Channel : Entity
+	public class Channel : Entity
 	{
 		[DataMember(Name = "is_im")]
 		public bool IsPrivate { get; private set; }

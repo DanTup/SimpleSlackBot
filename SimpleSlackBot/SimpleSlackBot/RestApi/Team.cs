@@ -3,7 +3,7 @@
 namespace SimpleSlackBot.RestApi
 {
 	[DataContract]
-	class Team : Entity
+	public class Team : Entity
 	{
 		[DataMember(Name = "email_domain")]
 		public string EmailDomain { get; private set; }

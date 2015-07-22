@@ -3,7 +3,7 @@
 namespace SimpleSlackBot.RestApi
 {
 	[DataContract]
-	class Entity
+	public class Entity
 	{
 		[DataMember(Name = "id")]
 		public string ID { get; private set; }

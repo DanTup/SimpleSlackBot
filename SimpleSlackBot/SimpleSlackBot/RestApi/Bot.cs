@@ -3,7 +3,7 @@
 namespace SimpleSlackBot.RestApi
 {
 	[DataContract]
-	class Bot : Entity
+	public class Bot : Entity
 	{
 	}
 }

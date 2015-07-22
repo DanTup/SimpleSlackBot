@@ -3,7 +3,7 @@
 namespace SimpleSlackBot.RestApi
 {
 	[DataContract]
-	abstract class Response
+	public abstract class Response
 	{
 		[DataMember(Name = "ok")]
 		public bool OK { get; private set; }
