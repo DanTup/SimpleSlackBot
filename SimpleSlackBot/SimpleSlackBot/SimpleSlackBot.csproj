@@ -54,6 +54,8 @@
     <Compile Include="RestApi\RtmStartResponse.cs" />
     <Compile Include="RestApi\Team.cs" />
     <Compile Include="RestApi\User.cs" />
+    <Compile Include="Serialiser.cs" />
+    <Compile Include="SlackRestApiClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
