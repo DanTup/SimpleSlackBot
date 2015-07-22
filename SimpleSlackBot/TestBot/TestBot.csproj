@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CountdownCommand.cs" />
     <Compile Include="Commands\EchoCommand.cs" />
     <Compile Include="ConsoleTraceListener.cs" />
     <Compile Include="Program.cs" />

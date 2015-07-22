@@ -23,7 +23,7 @@ namespace TestBot
 			{
 				// TODO: Commands.
 				bot.RegisterCommand(new EchoCommand());
-				//bot.RegisterCommand(new CountdownCommand());
+				bot.RegisterCommand(new CountdownCommand());
 
 				Console.WriteLine("Press a key to disconnect...");
 				Console.ReadKey();
