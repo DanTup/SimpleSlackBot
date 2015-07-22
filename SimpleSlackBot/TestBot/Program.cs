@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using SimpleSlackBot;
 
 namespace TestBot
 {
@@ -18,10 +16,14 @@ namespace TestBot
 
 		static async Task MainAsync(string[] args)
 		{
-			// TODO: Connect bot...
-			Debug.WriteLine("Test...");
+			// Grab a token we can use for testing from outside the repo, to avoid accidentally committing!
+			var token = Environment.GetEnvironmentVariable("SLACK_BOT", EnvironmentVariableTarget.User);
 
-			await Task.Delay(5000);
+			var bot = new Bot(token);
+
+			// TODO: Commands.
+			//bot.RegisterCommand(new EchoCommand());
+			//bot.RegisterCommand(new CountdownCommand());
 
 			Console.WriteLine("Press a key to disconnect...");
 			Console.ReadKey();

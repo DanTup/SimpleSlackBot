@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,7 +41,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RestApi\AuthTestResponse.cs" />
+    <Compile Include="RestApi\Bot.cs" />
+    <Compile Include="RestApi\Channel.cs" />
+    <Compile Include="RestApi\Entity.cs" />
+    <Compile Include="RestApi\ErrorResponse.cs" />
+    <Compile Include="RestApi\Group.cs" />
+    <Compile Include="RestApi\IM.cs" />
+    <Compile Include="RestApi\Response.cs" />
+    <Compile Include="RestApi\RtmStartResponse.cs" />
+    <Compile Include="RestApi\Team.cs" />
+    <Compile Include="RestApi\User.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
