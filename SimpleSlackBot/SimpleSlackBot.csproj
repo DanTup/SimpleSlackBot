@@ -45,21 +45,21 @@
     <Compile Include="Command.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomMessages.cs" />
-    <Compile Include="RestApi\AuthTestResponse.cs" />
-    <Compile Include="RestApi\Bot.cs" />
-    <Compile Include="RestApi\Channel.cs" />
-    <Compile Include="RestApi\Entity.cs" />
-    <Compile Include="RestApi\ErrorResponse.cs" />
-    <Compile Include="RestApi\Group.cs" />
-    <Compile Include="RestApi\IM.cs" />
-    <Compile Include="RestApi\Response.cs" />
-    <Compile Include="RestApi\RtmStartResponse.cs" />
-    <Compile Include="RestApi\Team.cs" />
-    <Compile Include="RestApi\User.cs" />
+    <Compile Include="Api\AuthTestResponse.cs" />
+    <Compile Include="Api\Bot.cs" />
+    <Compile Include="Api\Channel.cs" />
+    <Compile Include="Api\Entity.cs" />
+    <Compile Include="Api\ErrorResponse.cs" />
+    <Compile Include="Api\Group.cs" />
+    <Compile Include="Api\IM.cs" />
+    <Compile Include="Api\Response.cs" />
+    <Compile Include="Api\RtmStartResponse.cs" />
+    <Compile Include="Api\Team.cs" />
+    <Compile Include="Api\User.cs" />
     <Compile Include="Serialiser.cs" />
     <Compile Include="SlackRestApiClient.cs" />
-    <Compile Include="WebSocketApi\Event.cs" />
-    <Compile Include="WebSocketApi\MessageEvent.cs" />
+    <Compile Include="Api\Event.cs" />
+    <Compile Include="Api\MessageEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
