@@ -1,7 +1,6 @@
 ﻿using System.Runtime.Serialization;
-using SimpleSlackBot.RestApi;
 
-namespace SimpleSlackBot.WebSocketApi
+namespace SimpleSlackBot
 {
 	[DataContract]
 	public class MessageEvent : Event

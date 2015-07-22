@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace SimpleSlackBot.RestApi
+namespace SimpleSlackBot
 {
 	[DataContract]
 	public class RtmStartResponse : Response
@@ -28,6 +28,6 @@ namespace SimpleSlackBot.RestApi
 		public IM[] IMs { get; private set; }
 
 		[DataMember(Name = "bots")]
-		public Bot[] Bots { get; private set; }
+		public BotUser[] Bots { get; private set; }
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using SimpleSlackBot;
-using SimpleSlackBot.RestApi;
 
 namespace TestBot.Commands
 {

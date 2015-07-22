@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace SimpleSlackBot.RestApi
+namespace SimpleSlackBot
 {
 	[DataContract]
 	public class Entity
