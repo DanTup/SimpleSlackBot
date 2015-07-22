@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBot", "TestBot\TestBot.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A3F00C1D-FFBA-43B6-8111-11B782BCA2EB}"
 	ProjectSection(SolutionItems) = preProject
-		README = README
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
