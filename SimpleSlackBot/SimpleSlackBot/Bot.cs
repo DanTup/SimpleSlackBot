@@ -114,7 +114,7 @@ namespace SimpleSlackBot
 			}
 		}
 
-		internal void RegisterCommand(Command command)
+		public void RegisterCommand(Command command)
 		{
 			command.SetBot(this);
 			commands.Add(command);
