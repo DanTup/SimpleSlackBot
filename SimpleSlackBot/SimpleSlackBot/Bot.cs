@@ -90,7 +90,7 @@ namespace SimpleSlackBot
 
 			// Say hello in each of the channels the bot is a member of.
 			foreach (var channel in channels.Values.Where(c => !c.IsPrivate && c.IsMember))
-				await SendMessage(new MessageEvent(channel, "Hello!"));
+				await SendMessage(new MessageEvent(channel, RandomMessages.Hello()));
 		}
 
 		async Task ListenForMessages()
