@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSlackBot", "SimpleSlackBot\SimpleSlackBot.csproj", "{FC8A9A57-C128-4EDB-96F0-859B6FD53A8D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBot", "TestBot\TestBot.csproj", "{33729301-F8DD-45B3-B768-63DA469AC1BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FC8A9A57-C128-4EDB-96F0-859B6FD53A8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC8A9A57-C128-4EDB-96F0-859B6FD53A8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC8A9A57-C128-4EDB-96F0-859B6FD53A8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33729301-F8DD-45B3-B768-63DA469AC1BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33729301-F8DD-45B3-B768-63DA469AC1BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33729301-F8DD-45B3-B768-63DA469AC1BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33729301-F8DD-45B3-B768-63DA469AC1BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
