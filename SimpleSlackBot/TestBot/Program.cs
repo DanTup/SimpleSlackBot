@@ -16,18 +16,18 @@ namespace TestBot
 
 		static async Task MainAsync(string[] args)
 		{
-			// Grab a token we can use for testing from outside the repo, to avoid accidentally committing!
 			var token = Environment.GetEnvironmentVariable("SLACK_BOT", EnvironmentVariableTarget.User);
 
-			var bot = new Bot(token);
+			using (var bot = await Bot.Connect(token))
+			{
+				// TODO: Commands.
+				//bot.RegisterCommand(new EchoCommand());
+				//bot.RegisterCommand(new CountdownCommand());
 
-			// TODO: Commands.
-			//bot.RegisterCommand(new EchoCommand());
-			//bot.RegisterCommand(new CountdownCommand());
-
-			Console.WriteLine("Press a key to disconnect...");
-			Console.ReadKey();
-			Console.WriteLine();
+				Console.WriteLine("Press a key to disconnect...");
+				Console.ReadKey();
+				Console.WriteLine();
+			}
 		}
 	}
 }
