@@ -21,7 +21,6 @@ namespace TestBot
 
 			using (var bot = await Bot.Connect(token))
 			{
-				// TODO: Commands.
 				bot.RegisterCommand(new EchoCommand());
 				bot.RegisterCommand(new CountdownCommand());
 
