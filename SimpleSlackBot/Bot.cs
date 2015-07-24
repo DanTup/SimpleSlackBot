@@ -13,7 +13,7 @@ namespace SimpleSlackBot
 	{
 		readonly SlackRestApi api;
 		readonly ClientWebSocket ws = new ClientWebSocket();
-		readonly HashSet<Command> commands = new HashSet<Command>();
+		readonly HashSet<Handler> handlers = new HashSet<Handler>();
 
 		readonly Dictionary<string, User> users = new Dictionary<string, User>(); // TODO: Handle new users joining/leaving
 		readonly Dictionary<string, Channel> channels = new Dictionary<string, Channel>(); // TODO: Handle new channels/deleted
@@ -112,10 +112,10 @@ namespace SimpleSlackBot
 			}
 		}
 
-		public void RegisterCommand(Command command)
+		public void RegisterHandler(Handler handler)
 		{
-			command.SetBot(this);
-			commands.Add(command);
+			handler.SetBot(this);
+			handlers.Add(handler);
 		}
 
 		#region Message Handling
@@ -170,8 +170,8 @@ namespace SimpleSlackBot
 				return;
 			}
 
-			foreach (var command in commands)
-				command.OnMessage(channels[channelID], users[userID], text, cancellationSource.Token);
+			foreach (var handler in handlers)
+				handler.OnMessage(channels[channelID], users[userID], text, cancellationSource.Token);
 		}
 
 		#endregion

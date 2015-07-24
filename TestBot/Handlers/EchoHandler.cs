@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using SimpleSlackBot;
 
-namespace TestBot.Commands
+namespace TestBot.Handlers
 {
-	class EchoCommand : Command
+	class EchoHandler : Handler
 	{
 		const string prefix = "echo ";
 

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using SimpleSlackBot;
-using TestBot.Commands;
+using TestBot.Handlers;
 
 namespace TestBot
 {
@@ -21,8 +21,8 @@ namespace TestBot
 
 			using (var bot = await Bot.Connect(token))
 			{
-				bot.RegisterCommand(new EchoCommand());
-				bot.RegisterCommand(new CountdownCommand());
+				bot.RegisterHandler(new EchoHandler());
+				bot.RegisterHandler(new CountdownHandler());
 
 				Console.WriteLine("Press a key to disconnect...");
 				Console.ReadKey();

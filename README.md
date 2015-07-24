@@ -12,10 +12,10 @@ TODO: NuGet...
 
 Create a [bot integration](https://my.slack.com/services/new/bot) on Slack to get an API Key to connect a bot.
 
-Create a Command that can receive and send messages:
+Create a Handle that can receive and send messages:
 
 ```csharp
-class EchoCommand : Command
+class EchoHandler : Handler
 {
 	const string prefix = "echo ";
 
@@ -29,13 +29,13 @@ class EchoCommand : Command
 }
 ```
 	
-Connect the bot and register your command:
+Connect the bot and register your handler:
 
 ```csharp
 using (var bot = await Bot.Connect(token))
 {
-	bot.RegisterCommand(new EchoCommand());
-	bot.RegisterCommand(new CountdownCommand());
+	bot.RegisterHandler(new EchoHandler());
+	bot.RegisterHandler(new CountdownHandler());
 
 	Console.WriteLine("Press a key to disconnect...");
 	Console.ReadKey();
@@ -44,10 +44,10 @@ using (var bot = await Bot.Connect(token))
 	
 ## Command Cancellation
 
-It's possible to make your commands being cancelled. An optional `CancellationToken` can be used to signal cancellations when a user sends `abort`, `stop` or `cancel`:
+It's possible to make your handler support having commands cancelled. An optional `CancellationToken` can be used to signal cancellations when a user sends `abort`, `stop` or `cancel`:
 
 ```csharp
-class CountdownCommand : Command
+class CountdownHandler : Handler
 {
 	public override async Task OnMessage(Channel channel, User user, string text, CancellationToken cancellationToken)
 	{

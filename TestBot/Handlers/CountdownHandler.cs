@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using SimpleSlackBot;
 
-namespace TestBot.Commands
+namespace TestBot.Handlers
 {
-	class CountdownCommand : Command
+	class CountdownHandler : Handler
 	{
 		public override async Task OnMessage(Channel channel, User user, string text, CancellationToken cancellationToken)
 		{

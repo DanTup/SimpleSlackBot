@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 
 namespace SimpleSlackBot
 {
-	public abstract class Command
+	public abstract class Handler
 	{
 		Bot bot;
 
 		internal void SetBot(Bot bot)
 		{
 			if (this.bot != null)
-				throw new Exception("This command belongs to another :(");
+				throw new Exception("This handler belongs to another :(");
 
 			this.bot = bot;
 		}
