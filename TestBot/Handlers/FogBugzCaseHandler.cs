@@ -39,6 +39,10 @@ namespace TestBot.Handlers
 			if (!match.Success || !int.TryParse(match.Groups[1].Captures[0].Value, out caseNumber))
 				return;
 
+			// TODO: Write a placeholder message while fetcghing, then update later.
+			// Can't do this while Slack doesn't support links in updateMessage.
+			// https://twitter.com/DanTup/status/625277947113533441
+
 			// Attempt to fetch the case from the FogBugz API.
 			var c = GetCase(caseNumber);
 			if (c == null)

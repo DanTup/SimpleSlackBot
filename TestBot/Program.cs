@@ -26,6 +26,7 @@ namespace TestBot
 				bot.RegisterHandler(new EchoHandler());
 				bot.RegisterHandler(new CountdownHandler());
 				bot.RegisterHandler(new FogBugzCaseHandler(new Uri(fbUrl), fbToken));
+				bot.RegisterHandler(new SlowEchoHandler());
 
 				Console.WriteLine("Press a key to disconnect...");
 				Console.ReadKey();

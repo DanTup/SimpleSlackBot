@@ -73,5 +73,6 @@ class CountdownHandler : Handler
 There are a couple of sample bot handlers in the TestBot project that might help illustrate how to build things.
 
 - [Echo Handler](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/EchoHandler.cs)
-- [Countdown Handler (with cancellation)](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/CountdownHandler.cs)
+- [Slow Echo Handler (shows editing messages)](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/CountdownHandler.cs)
+- [Countdown Handler (shows cancelling commands)](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/CountdownHandler.cs)
 - [FogBugz Case Handler](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/FogBugzCaseHandler.cs)
