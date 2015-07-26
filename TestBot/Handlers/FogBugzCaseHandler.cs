@@ -44,13 +44,11 @@ namespace TestBot.Handlers
 			var http = new HttpClient();
 			http.DefaultRequestHeaders.ExpectContinue = false;
 
+			// TODO: Error handling.
 			var xml = XDocument.Load(new Uri(url, $"api.asp?token={UrlEncode(token)}&cmd=search&q={UrlEncode(caseNumber)}&cols=sTitle,sStatus,sPersonAssignedTo,sLatestTextSummary,sProject,sArea,ixBugOriginal,sFixFor,sCategory").AbsoluteUri);
 
 			var caseXml = xml.Descendants("case").Single();
-
-			if (caseXml == null)
-				return null;
-
+			
 			var parent = int.Parse(caseXml.Element("ixBugOriginal").Value);
 			return new Case
 			{
