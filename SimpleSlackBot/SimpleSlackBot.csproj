@@ -41,6 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\ChannelJoinedEvent.cs" />
+    <Compile Include="Api\UserChangedEvent.cs" />
+    <Compile Include="Api\ChannelChangedEvent.cs" />
     <Compile Include="Api\PostMessageResponse.cs" />
     <Compile Include="Api\TypingIndicator.cs" />
     <Compile Include="Bot.cs" />

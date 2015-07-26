@@ -5,10 +5,8 @@ namespace SimpleSlackBot
 	[DataContract]
 	public class MessageEvent : Event
 	{
-		public const string MESSAGE = "message";
-		public const string MESSAGE_CHANGED = "message_changed";
-
-		public override string Type { get { return MESSAGE; } }
+		public const string TYPE = "message";
+		public override string Type { get { return TYPE; } }
 
 		[DataMember(Name = "channel")]
 		public string ChannelID { get; private set; }

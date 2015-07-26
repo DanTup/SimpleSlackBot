@@ -97,7 +97,7 @@ namespace SimpleSlackBot
 
 			// Say hello in each of the channels the bot is a member of.
 			foreach (var channel in channels.Values.Where(c => !c.IsPrivate && c.IsMember))
-				await SendMessage(channel, RandomMessages.Hello());
+				await SayHello(channel);
 		}
 
 		public async Task Disconnect()
@@ -128,6 +128,11 @@ namespace SimpleSlackBot
 			}
 		}
 
+		async Task SayHello(Channel channel)
+		{
+			await SendMessage(channel, RandomMessages.Hello());
+		}
+
 		public void RegisterHandler(Handler handler)
 		{
 			handler.SetBot(this);
@@ -138,7 +143,14 @@ namespace SimpleSlackBot
 
 		internal async Task SendMessage(Channel channel, string text)
 		{
-			await PostMessage(channel.ID, text);
+			try
+			{
+				await PostMessage(channel.ID, text);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine(ex.ToString());
+			}
 		}
 
 		internal async Task SendTypingIndicator(Channel channel)
@@ -161,23 +173,23 @@ namespace SimpleSlackBot
 
 			switch (eventType)
 			{
-				case "hello":
-				case "presence_change":
-				case "user_typing":
-				case null: // Acknowledgement of sent message
-					break;
-
-				case MessageEvent.MESSAGE:
+				case MessageEvent.TYPE:
 					await Handle(Serialiser.Deserialise<MessageEvent>(message));
 					break;
 
-				default:
-					Debug.WriteLine("Unknown message type: " + eventType);
-					Console.ForegroundColor = ConsoleColor.Gray;
-					Console.WriteLine(message);
-					Console.ResetColor();
+				case ChannelChangedEvent.CHANNEL_CHANGED_TYPE:
+				case ChannelChangedEvent.CHANNEL_CREATED_TYPE:
+					Handle(Serialiser.Deserialise<ChannelChangedEvent>(message));
 					break;
 
+				case UserChangedEvent.USER_CHANGED_TYPE:
+				case UserChangedEvent.USER_CREATED_TYPE:
+					Handle(Serialiser.Deserialise<UserChangedEvent>(message));
+					break;
+
+				case ChannelJoinedEvent.TYPE:
+					await Handle(Serialiser.Deserialise<ChannelJoinedEvent>(message));
+					break;
 			}
 		}
 
@@ -211,6 +223,27 @@ namespace SimpleSlackBot
 					await SendMessage(channels[channelID], ex.ToString());
 				}
 			}
+		}
+
+		async Task Handle(ChannelJoinedEvent message)
+		{
+			Debug.WriteLine("JOINED: " + message.Channel.Name);
+
+			await SayHello(message.Channel);
+		}
+
+		void Handle(ChannelChangedEvent message)
+		{
+			Debug.WriteLine("CHANNEL UPDATED: " + message.Channel.Name);
+
+			channels[message.Channel.ID] = message.Channel;
+		}
+
+		void Handle(UserChangedEvent message)
+		{
+			Debug.WriteLine("USER UPDATED: " + message.User.Name);
+
+			users[message.User.ID] = message.User;
 		}
 
 		#endregion
