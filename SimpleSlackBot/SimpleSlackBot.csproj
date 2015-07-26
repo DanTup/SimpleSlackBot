@@ -44,7 +44,6 @@
     <Compile Include="Api\PostMessageResponse.cs" />
     <Compile Include="Bot.cs" />
     <Compile Include="Handler.cs" />
-    <Compile Include="Misc\PostedMessageInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomMessages.cs" />
     <Compile Include="Api\AuthTestResponse.cs" />

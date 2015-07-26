@@ -74,5 +74,5 @@ There are a couple of sample bot handlers in the TestBot project that might help
 
 - [Echo Handler](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/EchoHandler.cs)
 - [Slow Echo Handler (shows editing messages)](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/CountdownHandler.cs)
-- [Countdown Handler (shows cancelling commands)](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/CountdownHandler.cs)
+- [Countdown Handler (shows 'typing...')](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/SlowEchoHandler.cs)
 - [FogBugz Case Handler](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/FogBugzCaseHandler.cs)

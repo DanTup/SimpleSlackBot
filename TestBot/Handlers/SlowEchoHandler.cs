@@ -13,11 +13,12 @@ namespace TestBot.Handlers
 			if (!text.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
 				return;
 
-			var msg = await SendMessage(channel, "Please wait...");
+			// TODO:
+			//await SendTypingNotification();
 
 			await Task.Delay(3000);
 
-			await UpdateMessage(msg, text.Substring(prefix.Length));
+			await SendMessage(channel, text.Substring(prefix.Length));
 		}
 	}
 }
