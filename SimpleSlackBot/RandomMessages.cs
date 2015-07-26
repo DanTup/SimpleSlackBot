@@ -5,13 +5,22 @@ namespace SimpleSlackBot
 	static class RandomMessages
 	{
 		static Random rnd = new Random();
-		static T RandomOf<T>(params T[] items)
+		static bool Choose() => rnd.Next(2) == 1;
+        static string RandomOf(params string[] items)
 		{
-			return items[rnd.Next(items.Length)];
+			var msg = items[rnd.Next(items.Length)];
+
+			if (Choose())
+				msg = msg.ToLower();
+
+			if (Choose())
+				msg += "!";
+
+			return msg;
 		}
 
-		public static string Hello() => RandomOf("Hello!", "I'm back!");
+		public static string Hello() => RandomOf("Hello", "I'm back!", "Hi", "'sup?", "Yo");
 
-		public static string Goodbye() => RandomOf("Goodbye!", "I'll be back!", "Farewell!");
+		public static string Goodbye() => RandomOf("Goodbye", "Bye", "I'll be back", "Farewell", "So long");
 	}
 }
