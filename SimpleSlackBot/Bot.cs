@@ -58,11 +58,17 @@ namespace SimpleSlackBot
 
 		Task<AuthTestResponse> AuthTest() => api.Post<AuthTestResponse>("auth.test");
 		Task<RtmStartResponse> RtmStart() => api.Post<RtmStartResponse>("rtm.start");
-		Task<PostMessageResponse> PostMessage(Channel channel, string text) =>
+		Task<PostMessageResponse> PostMessage(string channelID, string text) =>
 			api.Post<PostMessageResponse>("chat.postMessage", new Dictionary<string, string> {
 				{ "as_user", "true" },
-				{ "channel", channel.ID },
+				{ "channel", channelID },
 				{ "text", text }
+			});
+		Task<PostMessageResponse> UpdateMessage(string timestamp, string channelID, string newText) =>
+			api.Post<PostMessageResponse>("chat.update", new Dictionary<string, string> {
+				{ "ts", timestamp },
+				{ "channel", channelID },
+				{ "text", newText }
 			});
 
 		#endregion
@@ -133,9 +139,26 @@ namespace SimpleSlackBot
 
 		#region Message Handling
 
-		internal async Task SendMessage(Channel channel, string text)
+		internal async Task<PostedMessageInfo> SendMessage(Channel channel, string text)
 		{
-			await PostMessage(channel, text);
+			var resp = await PostMessage(channel.ID, text);
+
+			return new PostedMessageInfo
+			{
+				Timestamp = resp.Timestamp,
+				ChannelID = channel.ID
+			};
+        }
+
+		internal async Task<PostedMessageInfo> UpdateMessage(PostedMessageInfo message, string newText)
+		{
+			var resp = await UpdateMessage(message.Timestamp, message.ChannelID, newText);
+
+			return new PostedMessageInfo
+			{
+				Timestamp = resp.Timestamp,
+				ChannelID = message.ChannelID
+			};
 		}
 
 		async Task HandleMessage(string message)

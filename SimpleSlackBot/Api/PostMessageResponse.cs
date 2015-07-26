@@ -6,6 +6,6 @@ namespace SimpleSlackBot
 	public class PostMessageResponse : Response
 	{
 		[DataMember(Name = "ts")]
-		public double Timestamp{ get; private set; }
+		public string Timestamp{ get; private set; }
 	}
 }

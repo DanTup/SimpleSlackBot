@@ -27,9 +27,16 @@ namespace SimpleSlackBot
 			return OnMessage(channel, user, text);
 		}
 
-		protected async Task SendMessage(Channel channel, string text)
+		protected async Task<PostedMessageInfo> SendMessage(Channel channel, string text)
 		{
-			await bot.SendMessage(channel, text);
+			return await bot.SendMessage(channel, text);
+		}
+
+		protected async Task<PostedMessageInfo> UpdateMessage(PostedMessageInfo message, string newText)
+		{
+			// TODO: UpdateMessage doesn't seem to support message links :(
+			// https://twitter.com/DanTup/status/625277947113533441
+			return await bot.UpdateMessage(message, newText);
 		}
 
 		/// <summary>

@@ -32,7 +32,7 @@ namespace SimpleSlackBot
 
 			var postData = new FormUrlEncodedContent(postArgs);
 			
-			Debug.WriteLine("REST SEND: " + postData);
+			Debug.WriteLine("REST SEND: " + await postData.ReadAsStringAsync());
 			var httpResponse = await http.PostAsync(new Uri(endpoint, method), postData);
 
 			// Stash the repsonse in a memory stream.
