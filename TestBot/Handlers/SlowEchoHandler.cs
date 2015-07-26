@@ -13,8 +13,7 @@ namespace TestBot.Handlers
 			if (!text.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
 				return;
 
-			// TODO:
-			//await SendTypingNotification();
+			await SendTypingIndicator(channel);
 
 			await Task.Delay(3000);
 

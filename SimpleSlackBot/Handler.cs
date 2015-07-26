@@ -32,6 +32,11 @@ namespace SimpleSlackBot
 			await bot.SendMessage(channel, text);
 		}
 
+		protected async Task SendTypingIndicator(Channel channel)
+		{
+			await bot.SendTypingIndicator(channel);
+		}
+
 		/// <summary>
 		/// Escapes message text for Slack messages.
 		/// </summary>

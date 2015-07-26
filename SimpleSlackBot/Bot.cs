@@ -6,6 +6,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using SimpleSlackBot.Api;
 
 namespace SimpleSlackBot
 {
@@ -15,6 +16,7 @@ namespace SimpleSlackBot
 		readonly ClientWebSocket ws = new ClientWebSocket();
 		readonly HashSet<Handler> handlers = new HashSet<Handler>();
 
+		User self;
 		readonly Dictionary<string, User> users = new Dictionary<string, User>(); // TODO: Handle new users joining/leaving
 		readonly Dictionary<string, Channel> channels = new Dictionary<string, Channel>(); // TODO: Handle new channels/deleted
 
@@ -80,6 +82,7 @@ namespace SimpleSlackBot
 			var rtmResponse = await this.RtmStart();
 
 			// Store users and channels so we can look them up by ID.
+			self = rtmResponse.Self;
 			foreach (var user in rtmResponse.Users)
 				users.Add(user.ID, user);
 			foreach (var channel in rtmResponse.Channels.Union(rtmResponse.IMs))
@@ -136,7 +139,19 @@ namespace SimpleSlackBot
 		internal async Task SendMessage(Channel channel, string text)
 		{
 			await PostMessage(channel.ID, text);
-        }
+		}
+
+		internal async Task SendTypingIndicator(Channel channel)
+		{
+			await Send(new TypingIndicator(channel.ID));
+		}
+
+		internal async Task Send<T>(T message)
+		{
+			var json = Serialiser.Serialise(message);
+			Debug.WriteLine("SEND: " + json);
+			await ws.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(json)), WebSocketMessageType.Text, true, CancellationToken.None);
+		}
 
 		async Task HandleMessage(string message)
 		{
@@ -172,6 +187,10 @@ namespace SimpleSlackBot
 			var channelID = message.Message?.ChannelID ?? message.ChannelID;
 			var userID = message.Message?.UserID ?? message.UserID;
 			var text = message.Message?.Text ?? message.Text;
+
+			// If the message is from our bot, do not handle it.
+			if (userID == self.ID)
+				return;
 
 			// If the text is cancellation, then send a cancellation message instead.
 			if (cancellationTerms.Contains(text, StringComparer.OrdinalIgnoreCase))

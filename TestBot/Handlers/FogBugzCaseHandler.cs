@@ -39,17 +39,15 @@ namespace TestBot.Handlers
 			if (!match.Success || !int.TryParse(match.Groups[1].Captures[0].Value, out caseNumber))
 				return;
 
-			// TODO: Write a placeholder message while fetcghing, then update later.
-			// Can't do this while Slack doesn't support links in updateMessage.
-			// https://twitter.com/DanTup/status/625277947113533441
+			// Make it clear we're doing something.
+			await SendTypingIndicator(channel);
 
 			// Attempt to fetch the case from the FogBugz API.
 			var c = GetCase(caseNumber);
-			if (c == null)
-				return;
-
-			// Send a nicely-formatted message back to the channel.
-			await SendMessage(channel, FormatMessage(c));
+			if (c != null)
+				await SendMessage(channel, FormatMessage(c));
+			else
+				await SendMessage(channel, $"_(Unable to retrieve info from FogBugz for Case {caseNumber})_");
 		}
 
 		/// <summary>
@@ -63,7 +61,10 @@ namespace TestBot.Handlers
 			// TODO: Error handling.
 			var xml = XDocument.Load(new Uri(url, $"api.asp?token={UrlEncode(token)}&cmd=search&q={UrlEncode(caseNumber)}&cols=sTitle,sStatus,sPersonAssignedTo,sLatestTextSummary,sProject,sArea,ixBugOriginal,sFixFor,sCategory").AbsoluteUri);
 
-			var caseXml = xml.Descendants("case").Single();
+			var caseXml = xml.Descendants("case").SingleOrDefault();
+
+			if (caseXml == null)
+				return null;
 			
 			var parent = int.Parse(caseXml.Element("ixBugOriginal").Value);
 			return new Case
