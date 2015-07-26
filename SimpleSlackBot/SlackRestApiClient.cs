@@ -31,11 +31,13 @@ namespace SimpleSlackBot
 				});
 
 			var postData = new FormUrlEncodedContent(postArgs);
+			
+			Debug.WriteLine("REST SEND: " + postData);
 			var httpResponse = await http.PostAsync(new Uri(endpoint, method), postData);
 
 			// Stash the repsonse in a memory stream.
 			var json = await httpResponse.Content.ReadAsStringAsync();
-			Debug.WriteLine("RCV: " + json);
+			Debug.WriteLine("REST RCV: " + json);
 
 			// Create serialisers for our error type (to check if we're valid) and the specific type
 			// we've been asked to deserialise into.

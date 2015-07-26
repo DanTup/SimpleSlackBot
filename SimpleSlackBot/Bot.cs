@@ -58,6 +58,12 @@ namespace SimpleSlackBot
 
 		Task<AuthTestResponse> AuthTest() => api.Post<AuthTestResponse>("auth.test");
 		Task<RtmStartResponse> RtmStart() => api.Post<RtmStartResponse>("rtm.start");
+		Task<PostMessageResponse> PostMessage(Channel channel, string text) =>
+			api.Post<PostMessageResponse>("chat.postMessage", new Dictionary<string, string> {
+				{ "as_user", "true" },
+				{ "channel", channel.ID },
+				{ "text", text }
+			});
 
 		#endregion
 
@@ -88,7 +94,14 @@ namespace SimpleSlackBot
 
 			// Say hello in each of the channels the bot is a member of.
 			foreach (var channel in channels.Values.Where(c => !c.IsPrivate && c.IsMember))
-				await SendMessage(new MessageEvent(channel, RandomMessages.Hello()));
+				await SendMessage(channel, RandomMessages.Hello());
+		}
+
+		public async Task Disconnect()
+		{
+			// Say goodbye to each of the channels the bot is a member of.
+			foreach (var channel in channels.Values.Where(c => !c.IsPrivate && c.IsMember))
+				await SendMessage(channel, RandomMessages.Goodbye());
 		}
 
 		async Task ListenForMessages()
@@ -108,7 +121,7 @@ namespace SimpleSlackBot
 						break;
 				}
 
-				HandleMessage(fullMessage.ToString());
+				await HandleMessage(fullMessage.ToString());
 			}
 		}
 
@@ -120,14 +133,12 @@ namespace SimpleSlackBot
 
 		#region Message Handling
 
-		internal async Task SendMessage<TEvent>(TEvent message)
+		internal async Task SendMessage(Channel channel, string text)
 		{
-			var json = Serialiser.Serialise(message);
-			Debug.WriteLine("SEND: " + json);
-			await ws.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(json)), WebSocketMessageType.Text, true, CancellationToken.None);
+			await PostMessage(channel, text);
 		}
 
-		void HandleMessage(string message)
+		async Task HandleMessage(string message)
 		{
 			Debug.WriteLine("RCV: " + message);
 
@@ -142,7 +153,7 @@ namespace SimpleSlackBot
 					break;
 
 				case MessageEvent.MESSAGE:
-					Handle(Serialiser.Deserialise<MessageEvent>(message));
+					await Handle(Serialiser.Deserialise<MessageEvent>(message));
 					break;
 
 				default:
@@ -156,7 +167,7 @@ namespace SimpleSlackBot
 		}
 
 		CancellationTokenSource cancellationSource = new CancellationTokenSource();
-		void Handle(MessageEvent message)
+		async Task Handle(MessageEvent message)
 		{
 			var channelID = message.Message?.ChannelID ?? message.ChannelID;
 			var userID = message.Message?.UserID ?? message.UserID;
@@ -171,7 +182,16 @@ namespace SimpleSlackBot
 			}
 
 			foreach (var handler in handlers)
-				handler.OnMessage(channels[channelID], users[userID], text, cancellationSource.Token);
+			{
+				try
+				{
+					await handler.OnMessage(channels[channelID], users[userID], text, cancellationSource.Token);
+				}
+				catch (Exception ex)
+				{
+					await SendMessage(channels[channelID], ex.ToString());
+				}
+			}
 		}
 
 		#endregion

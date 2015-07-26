@@ -11,5 +11,7 @@ namespace SimpleSlackBot
 		}
 
 		public static string Hello() => RandomOf("Hello!", "I'm back!");
+
+		public static string Goodbye() => RandomOf("Goodbye!", "I'll be back!", "Farewell!");
 	}
 }

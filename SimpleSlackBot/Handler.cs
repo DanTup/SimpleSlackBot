@@ -28,7 +28,16 @@ namespace SimpleSlackBot
 
 		protected async Task SendMessage(Channel channel, string text)
 		{
-			await bot.SendMessage(new MessageEvent(channel, text));
+			await bot.SendMessage(channel, text);
 		}
+
+		/// <summary>
+		/// Escapes message text for Slack messages.
+		/// </summary>
+		protected string Escape(object input)
+		{
+			// https://api.slack.com/docs/formatting
+			return (input?.ToString() ?? "").Replace("&", "&amp;").Replace("<", "&lt;").Replace("&", "&gt;");
+        }
 	}
 }

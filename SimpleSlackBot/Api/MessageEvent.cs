@@ -24,11 +24,5 @@ namespace SimpleSlackBot
 
 		[DataMember(Name = "hidden")]
 		public bool Hidden { get; private set; }
-
-		public MessageEvent(Channel channel, string text)
-		{
-			this.ChannelID = channel.ID;
-			this.Text = text;
-		}
 	}
 }
