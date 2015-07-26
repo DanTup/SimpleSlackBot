@@ -11,11 +11,20 @@ using SimpleSlackBot;
 
 namespace TestBot.Handlers
 {
+	/// <summary>
+	/// Listens for "Case x" in chat and provides links and some details about the FogBugz case.
+	/// </summary>
 	class FogBugzCaseHandler : Handler
 	{
 		readonly Uri url;
 		readonly string token;
 
+		/// <summary>
+		/// Creates a SimpleSlackBot handler that listens for "Case x" in chat and provides links and some details
+		/// about the FogBugz case.
+		/// </summary>
+		/// <param name="url">The base url of the FogBugz installation (eg. https://yourname.fogbugz.com/).</param>
+		/// <param name="token">The API token to use when connectingto FogBugz.</param>
 		public FogBugzCaseHandler(Uri url, string token)
 		{
 			this.url = url;
@@ -24,21 +33,26 @@ namespace TestBot.Handlers
 
 		public async override Task OnMessage(Channel channel, User user, string text)
 		{
-			var match = Regex.Match(text, @"case (\d+)", RegexOptions.IgnoreCase);
+			// Check the message for a case reference.
+			var match = Regex.Match(text, @"(?:fogbugz|fb|case|bug|feature|issue) (\d+)", RegexOptions.IgnoreCase);
 
+			// Extract the case number.
 			int caseNumber;
 			if (!match.Success || !int.TryParse(match.Groups[1].Captures[0].Value, out caseNumber))
 				return;
 
+			// Attempt to fetch the case from the FogBugz API.
 			var c = GetCase(caseNumber);
 			if (c == null)
 				return;
 
-			var message = FormatMessage(c);
-
-			await SendMessage(channel, message);
+			// Send a nicely-formatted message back to the channel.
+			await SendMessage(channel, FormatMessage(c));
 		}
 
+		/// <summary>
+		/// Fetch case information from the FogBugz API.
+		/// </summary>
 		Case GetCase(int caseNumber)
 		{
 			var http = new HttpClient();
@@ -66,11 +80,16 @@ namespace TestBot.Handlers
 			};
 		}
 
+		/// <summary>
+		/// Creates a nicely-formatted message for the provided FogBugz case info.
+		/// </summary>
 		string FormatMessage(Case c)
 		{
 			var message = new StringBuilder();
+
 			message.AppendLine($"*<{Escape(c.Url)}|{c.CaseNumber}: {Escape(c.Title)}>*");
 			message.AppendLine($"_{Escape(c.Category)}_ | _{Escape(c.Project)}_ | _{Escape(c.Area)}_");
+
 			message.Append($"*Status:* {Escape(c.Status)} | ");
 			if (!string.Equals(c.AssignedTo, "closed", StringComparison.OrdinalIgnoreCase)) // TODO: Use ixAssignedTo
 				message.Append($"*Assigned:* {Escape(c.AssignedTo)} | ");
@@ -78,6 +97,7 @@ namespace TestBot.Handlers
 
 			if (c.ParentBug != null)
 				message.AppendLine($"*Parent:* Case {Escape(c.ParentBug)}");
+
 			message.AppendLine(Escape(c.LatestText));
 
 			return message.ToString();
