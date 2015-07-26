@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,5 +40,10 @@ namespace SimpleSlackBot
 			// https://api.slack.com/docs/formatting
 			return (input?.ToString() ?? "").Replace("&", "&amp;").Replace("<", "&lt;").Replace("&", "&gt;");
         }
+
+		protected string UrlEncode(object input)
+		{
+			return WebUtility.UrlEncode(input?.ToString() ?? "");
+		}
 	}
 }
