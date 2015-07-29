@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\ChannelJoinedEvent.cs" />
+    <Compile Include="Api\Attachment.cs" />
     <Compile Include="Api\UserChangedEvent.cs" />
     <Compile Include="Api\ChannelChangedEvent.cs" />
     <Compile Include="Api\PostMessageResponse.cs" />

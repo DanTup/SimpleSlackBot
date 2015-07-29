@@ -27,9 +27,9 @@ namespace SimpleSlackBot
 			return OnMessage(channel, user, text);
 		}
 
-		protected async Task SendMessage(Channel channel, string text)
+		protected async Task SendMessage(Channel channel, string text, Attachment[] attachments = null)
 		{
-			await bot.SendMessage(channel, text);
+			await bot.SendMessage(channel, text, attachments);
 		}
 
 		protected async Task SendTypingIndicator(Channel channel)

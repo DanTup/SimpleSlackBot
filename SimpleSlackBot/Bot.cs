@@ -60,11 +60,12 @@ namespace SimpleSlackBot
 
 		Task<AuthTestResponse> AuthTest() => api.Post<AuthTestResponse>("auth.test");
 		Task<RtmStartResponse> RtmStart() => api.Post<RtmStartResponse>("rtm.start");
-		Task<PostMessageResponse> PostMessage(string channelID, string text) =>
+		Task<PostMessageResponse> PostMessage(string channelID, string text, Attachment[] attachments = null) =>
 			api.Post<PostMessageResponse>("chat.postMessage", new Dictionary<string, string> {
 				{ "as_user", "true" },
 				{ "channel", channelID },
-				{ "text", text }
+				{ "text", text },
+				{ "attachments", attachments != null ? Serialiser.Serialise(attachments) : "" }
 			});
 
 		#endregion
@@ -141,11 +142,11 @@ namespace SimpleSlackBot
 
 		#region Message Handling
 
-		internal async Task SendMessage(Channel channel, string text)
+		internal async Task SendMessage(Channel channel, string text, Attachment[] attachments = null)
 		{
 			try
 			{
-				await PostMessage(channel.ID, text);
+				await PostMessage(channel.ID, text, attachments);
 			}
 			catch (Exception ex)
 			{

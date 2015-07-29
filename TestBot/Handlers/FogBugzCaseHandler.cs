@@ -44,10 +44,29 @@ namespace TestBot.Handlers
 
 			// Attempt to fetch the case from the FogBugz API.
 			var c = GetCase(caseNumber);
-			if (c != null)
-				await SendMessage(channel, FormatMessage(c));
-			else
+			if (c == null)
 				await SendMessage(channel, $"_(Unable to retrieve info from FogBugz for Case {caseNumber})_");
+			else
+			{
+				var att = new Attachment
+				{
+					Pretext = c.ParentBug != null ? $"Child case of {c.ParentBug}" : null,
+					Fallback = $"{caseNumber}: {c.Title}",
+					Title = $"{caseNumber}: {c.Title}",
+					TitleLink = c.Url.AbsoluteUri,
+					Text = c.LatestText,
+					AuthorName = c.IsOpen ? c.AssignedTo : null,
+					AuthorIcon = new Uri(url, $"default.asp?ixPerson={c.ixAssignedTo}&pg=pgAvatar&pxSize=16").AbsoluteUri,
+					Colour = c.ixPriority <= 2 ? "danger" : "warning",
+                    Fields = new[]
+					{
+						new Field(c.Status, c.Category),
+						new Field($"{c.Project} {c.Area}", "FixFor: " + c.Milestone)
+					}
+				};
+
+				await SendMessage(channel, null, new[] { att });
+			}
 		}
 
 		/// <summary>
@@ -59,13 +78,13 @@ namespace TestBot.Handlers
 			http.DefaultRequestHeaders.ExpectContinue = false;
 
 			// TODO: Error handling.
-			var xml = XDocument.Load(new Uri(url, $"api.asp?token={UrlEncode(token)}&cmd=search&q={UrlEncode(caseNumber)}&cols=sTitle,sStatus,sPersonAssignedTo,sLatestTextSummary,sProject,sArea,ixBugOriginal,sFixFor,sCategory").AbsoluteUri);
+			var xml = XDocument.Load(new Uri(url, $"api.asp?token={UrlEncode(token)}&cmd=search&q={UrlEncode(caseNumber)}&cols=sTitle,sStatus,ixPersonAssignedTo,sPersonAssignedTo,sLatestTextSummary,sProject,sArea,ixBugOriginal,sFixFor,sCategory,fOpen,ixPriority").AbsoluteUri);
 
 			var caseXml = xml.Descendants("case").SingleOrDefault();
 
 			if (caseXml == null)
 				return null;
-			
+
 			var parent = int.Parse(caseXml.Element("ixBugOriginal").Value);
 			return new Case
 			{
@@ -74,38 +93,18 @@ namespace TestBot.Handlers
 				ParentBug = parent != 0 ? parent : (int?)null,
 				Title = caseXml.Element("sTitle").Value,
 				Status = caseXml.Element("sStatus").Value,
+				ixPriority = int.Parse(caseXml.Element("ixPriority").Value),
+                IsOpen = bool.Parse(caseXml.Element("fOpen").Value),
 				Category = caseXml.Element("sCategory").Value,
 				Project = caseXml.Element("sProject").Value,
 				Area = caseXml.Element("sArea").Value,
 				Milestone = caseXml.Element("sFixFor").Value,
+				ixAssignedTo = int.Parse(caseXml.Element("ixPersonAssignedTo").Value),
 				AssignedTo = caseXml.Element("sPersonAssignedTo").Value,
 				LatestText = caseXml.Element("sLatestTextSummary").Value,
 			};
 		}
-
-		/// <summary>
-		/// Creates a nicely-formatted message for the provided FogBugz case info.
-		/// </summary>
-		string FormatMessage(Case c)
-		{
-			var message = new StringBuilder();
-
-			message.AppendLine($"*<{Escape(c.Url)}|{c.CaseNumber}: {Escape(c.Title)}>*");
-			message.AppendLine($"_{Escape(c.Category)}_ | _{Escape(c.Project)}_ | _{Escape(c.Area)}_");
-
-			message.Append($"*Status:* {Escape(c.Status)} | ");
-			if (!string.Equals(c.AssignedTo, "closed", StringComparison.OrdinalIgnoreCase)) // TODO: Use ixAssignedTo
-				message.Append($"*Assigned:* {Escape(c.AssignedTo)} | ");
-			message.AppendLine($"*FixFor:* {Escape(c.Milestone)}");
-
-			if (c.ParentBug != null)
-				message.AppendLine($"*Parent:* Case {Escape(c.ParentBug)}");
-
-			message.AppendLine(Escape(c.LatestText));
-
-			return message.ToString();
-		}
-
+		
 		class Case
 		{
 			public int CaseNumber { get; set; }
@@ -113,10 +112,13 @@ namespace TestBot.Handlers
 			public int? ParentBug { get; set; }
 			public string Title { get; set; }
 			public string Status { get; set; }
+			public int ixPriority { get; set; }
+			public bool IsOpen { get; set; }
 			public string Category { get; set; }
 			public string Project { get; set; }
 			public string Area { get; set; }
 			public string Milestone { get; set; }
+			public int ixAssignedTo { get; set; }
 			public string AssignedTo { get; set; }
 			public string LatestText { get; set; }
 		}
