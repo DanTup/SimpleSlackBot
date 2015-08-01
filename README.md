@@ -6,7 +6,11 @@ This is being developed for my own use and may or not every be finished/fixed/ma
 
 ## Installation
 
-TODO: NuGet...
+Install from [NuGet](https://www.nuget.org/packages/SimpleSlackBot/):
+
+```powershell
+PM> Install-Package SimpleSlackBot
+```
 
 ## Usage
 
