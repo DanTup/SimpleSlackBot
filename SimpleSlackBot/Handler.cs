@@ -19,7 +19,9 @@ namespace SimpleSlackBot
 
 		public virtual Task OnMessage(Channel channel, User user, string text)
 		{
-			return Task.CompletedTask;
+			// TODO:.NET 4.6.
+			//return Task.CompletedTask;
+			return Task.FromResult(true);
 		}
 
 		public virtual Task OnMessage(Channel channel, User user, string text, CancellationToken cancellationToken)
