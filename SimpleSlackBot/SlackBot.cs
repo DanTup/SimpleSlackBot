@@ -11,7 +11,7 @@ using SimpleSlackBot.Api;
 
 namespace SimpleSlackBot
 {
-	public class Bot : IDisposable
+	public class SlackBot : IDisposable
 	{
 		readonly SlackRestApi api;
 		readonly ClientWebSocket ws = new ClientWebSocket();
@@ -25,16 +25,16 @@ namespace SimpleSlackBot
 
 		#region Construction
 
-		private Bot(string token)
+		private SlackBot(string token)
 		{
 			api = new SlackRestApi(token);
 		}
 
-		public static async Task<Bot> Connect(string apiToken)
+		public static async Task<SlackBot> Connect(string apiToken)
 		{
 			// Can't do async constructors, so do connection here. This makes it easy to tie the lifetime of the
 			// websocket to this class.
-			var bot = new Bot(apiToken);
+			var bot = new SlackBot(apiToken);
 			await bot.Connect();
 			return bot;
 		}

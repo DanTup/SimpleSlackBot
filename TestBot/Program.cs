@@ -42,7 +42,7 @@ namespace TestBot
 			Debug.Listeners.Add(new ConsoleTraceListener());
 			var token = Environment.GetEnvironmentVariable("SLACK_BOT", EnvironmentVariableTarget.User);
 
-			using (var bot = await Bot.Connect(token))
+			using (var bot = await SlackBot.Connect(token))
 			{
 				foreach (var handler in handlers)
 					bot.RegisterHandler(handler);
