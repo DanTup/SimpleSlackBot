@@ -72,6 +72,19 @@ class CountdownHandler : Handler
 }
 ```
 
+## Testing Bots without Slack
+
+You can use the ConsoleBot to test your handlers without needing to go via Slack.
+
+	var bot = new ConsoleBot();
+
+	bot.RegisterHandler(new EchoHandler());
+	bot.RegisterHandler(new CountdownHandler());
+
+	bot.HandleInput();
+	
+Upon calling `HandleInput`, the bot will block, consuming input from the console (via `Console.ReadLine`). The test project uses this version of the bot by default. You should change the `useSlackBot` boolean in `Program.cs` to switch to the real `SlackBot`.
+
 ## Sample Bot Handlers
 
 There are a couple of sample bot handlers in the TestBot project that might help illustrate how to build things.
