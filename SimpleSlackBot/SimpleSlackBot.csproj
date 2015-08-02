@@ -48,6 +48,7 @@
     <Compile Include="Api\ChannelChangedEvent.cs" />
     <Compile Include="Api\PostMessageResponse.cs" />
     <Compile Include="Api\TypingIndicator.cs" />
+    <Compile Include="Bot.cs" />
     <Compile Include="SlackBot.cs" />
     <Compile Include="ConsoleBot.cs" />
     <Compile Include="Handler.cs" />

@@ -6,9 +6,9 @@ namespace SimpleSlackBot
 	public class Entity
 	{
 		[DataMember(Name = "id")]
-		public string ID { get; private set; }
+		public string ID { get; internal set; }
 
 		[DataMember(Name = "name")]
-		public string Name { get; private set; }
+		public string Name { get; internal set; }
 	}
 }

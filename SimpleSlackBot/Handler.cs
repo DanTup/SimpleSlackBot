@@ -7,9 +7,9 @@ namespace SimpleSlackBot
 {
 	public abstract class Handler
 	{
-		SlackBot bot;
+		Bot bot;
 
-		internal void SetBot(SlackBot bot)
+		internal void SetBot(Bot bot)
 		{
 			if (this.bot != null)
 				throw new Exception("This handler belongs to another :(");

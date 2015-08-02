@@ -36,7 +36,7 @@ class EchoHandler : Handler
 Connect the bot and register your handler:
 
 ```csharp
-using (var bot = await Bot.Connect(token))
+using (var bot = await SlackBot.Connect(token))
 {
 	bot.RegisterHandler(new EchoHandler());
 	bot.RegisterHandler(new CountdownHandler());

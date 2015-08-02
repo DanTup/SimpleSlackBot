@@ -27,7 +27,7 @@ namespace TestBot
 			//RunConsoleBot(handlers);
 		}
 
-		//static RunConsoleBot(Handler[] handlers)
+		//static void RunConsoleBot(Handler[] handlers)
 		//{
 		//	var bot = new ConsoleBot();
 

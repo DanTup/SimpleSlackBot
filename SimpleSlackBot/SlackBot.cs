@@ -11,18 +11,15 @@ using SimpleSlackBot.Api;
 
 namespace SimpleSlackBot
 {
-	public class SlackBot : IDisposable
+	public class SlackBot : Bot, IDisposable
 	{
 		readonly SlackRestApi api;
 		readonly ClientWebSocket ws = new ClientWebSocket();
-		readonly HashSet<Handler> handlers = new HashSet<Handler>();
 
 		User self;
 		readonly Dictionary<string, User> users = new Dictionary<string, User>(); // TODO: Handle new users joining/leaving
 		readonly Dictionary<string, Channel> channels = new Dictionary<string, Channel>(); // TODO: Handle new channels/deleted
-
-		readonly string[] cancellationTerms = new[] { "cancel", "abort", "stop" };
-
+		
 		#region Construction
 
 		private SlackBot(string token)
@@ -95,7 +92,7 @@ namespace SimpleSlackBot
 			Debug.WriteLine("Connected...");
 
 			// Start the receive message loop.
-			var _ = Task.Run(ListenForMessages);
+			var _ = Task.Run(ListenForApiMessages);
 
 			// Say hello in each of the channels the bot is a member of.
 			foreach (var channel in channels.Values.Where(c => !c.IsPrivate && c.IsMember))
@@ -105,17 +102,14 @@ namespace SimpleSlackBot
 		public async Task Disconnect()
 		{
 			// Cancel all in-process tasks.
-			cancellationSource.Cancel();
-
-			// Wait for all tasks to finish cancelling.
-			await Task.WhenAll(handlerTasks);
+			await CancelAllTasks();
 
 			// Say goodbye to each of the channels the bot is a member of.
 			foreach (var channel in channels.Values.Where(c => !c.IsPrivate && c.IsMember))
-				await SendMessage(channel, RandomMessages.Goodbye());
+				await SayGoodbye(channel);
 		}
 
-		async Task ListenForMessages()
+		async Task ListenForApiMessages()
 		{
 			var buffer = new byte[1024];
 			var segment = new ArraySegment<byte>(buffer);
@@ -132,24 +126,13 @@ namespace SimpleSlackBot
 						break;
 				}
 
-				await HandleMessage(fullMessage.ToString());
+				await HandleApiMessage(fullMessage.ToString());
 			}
-		}
-
-		async Task SayHello(Channel channel)
-		{
-			await SendMessage(channel, RandomMessages.Hello());
-		}
-
-		public void RegisterHandler(Handler handler)
-		{
-			handler.SetBot(this);
-			handlers.Add(handler);
-		}
+		}		
 
 		#region Message Handling
 
-		internal async Task SendMessage(Channel channel, string text, Attachment[] attachments = null)
+		internal override async Task SendMessage(Channel channel, string text, Attachment[] attachments = null)
 		{
 			try
 			{
@@ -161,19 +144,19 @@ namespace SimpleSlackBot
 			}
 		}
 
-		internal async Task SendTypingIndicator(Channel channel)
+		internal override async Task SendTypingIndicator(Channel channel)
 		{
-			await Send(new TypingIndicator(channel.ID));
+			await SendApiMessage(new TypingIndicator(channel.ID));
 		}
 
-		internal async Task Send<T>(T message)
+		internal async Task SendApiMessage<T>(T message)
 		{
 			var json = Serialiser.Serialise(message);
 			Debug.WriteLine("SEND: " + json);
 			await ws.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(json)), WebSocketMessageType.Text, true, CancellationToken.None);
 		}
 
-		async Task HandleMessage(string message)
+		async Task HandleApiMessage(string message)
 		{
 			Debug.WriteLine("RCV: " + message);
 
@@ -182,28 +165,26 @@ namespace SimpleSlackBot
 			switch (eventType)
 			{
 				case MessageEvent.TYPE:
-					await Handle(Serialiser.Deserialise<MessageEvent>(message));
+					await HandleApiMessage(Serialiser.Deserialise<MessageEvent>(message));
 					break;
 
 				case ChannelChangedEvent.CHANNEL_CHANGED_TYPE:
 				case ChannelChangedEvent.CHANNEL_CREATED_TYPE:
-					Handle(Serialiser.Deserialise<ChannelChangedEvent>(message));
+					HandleApiMessage(Serialiser.Deserialise<ChannelChangedEvent>(message));
 					break;
 
 				case UserChangedEvent.USER_CHANGED_TYPE:
 				case UserChangedEvent.USER_CREATED_TYPE:
-					Handle(Serialiser.Deserialise<UserChangedEvent>(message));
+					HandleApiMessage(Serialiser.Deserialise<UserChangedEvent>(message));
 					break;
 
 				case ChannelJoinedEvent.TYPE:
-					await Handle(Serialiser.Deserialise<ChannelJoinedEvent>(message));
+					await HandleApiMessage(Serialiser.Deserialise<ChannelJoinedEvent>(message));
 					break;
 			}
 		}
 
-		CancellationTokenSource cancellationSource = new CancellationTokenSource();
-		ConcurrentBag<Task> handlerTasks = new ConcurrentBag<Task>();
-		async Task Handle(MessageEvent message)
+		async Task HandleApiMessage(MessageEvent message)
 		{
 			var channelID = message.Message?.ChannelID ?? message.ChannelID;
 			var userID = message.Message?.UserID ?? message.UserID;
@@ -213,50 +194,27 @@ namespace SimpleSlackBot
 			if (userID == self.ID)
 				return;
 
-			// If the text is cancellation, then send a cancellation message instead.
-			if (cancellationTerms.Contains(text, StringComparer.OrdinalIgnoreCase))
-			{
-				cancellationSource.Cancel();
-				cancellationSource = new CancellationTokenSource();
-				return;
-			}
-
-			foreach (var handler in handlers)
-			{
-				handlerTasks.Add(SendMessageToHandlerAsync(channelID, userID, text, handler));
-			}
+			HandleRecievedMessage(channels[channelID], users[userID], text);
 
 			// TODO: CompletedTask (4.6).
 			await Task.FromResult(true);
 		}
-
-		async Task SendMessageToHandlerAsync(string channelID, string userID, string text, Handler handler)
-		{
-			try
-			{
-				await handler.OnMessage(channels[channelID], users[userID], text, cancellationSource.Token);
-			}
-			catch (Exception ex)
-			{
-				await SendMessage(channels[channelID], ex.ToString());
-			}
-		}
-
-		async Task Handle(ChannelJoinedEvent message)
+		
+		async Task HandleApiMessage(ChannelJoinedEvent message)
 		{
 			Debug.WriteLine("JOINED: " + message.Channel.Name);
 
 			await SayHello(message.Channel);
 		}
 
-		void Handle(ChannelChangedEvent message)
+		void HandleApiMessage(ChannelChangedEvent message)
 		{
 			Debug.WriteLine("CHANNEL UPDATED: " + message.Channel.Name);
 
 			channels[message.Channel.ID] = message.Channel;
 		}
 
-		void Handle(UserChangedEvent message)
+		void HandleApiMessage(UserChangedEvent message)
 		{
 			Debug.WriteLine("USER UPDATED: " + message.User.Name);
 
