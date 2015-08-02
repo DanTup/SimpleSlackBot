@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -103,6 +104,12 @@ namespace SimpleSlackBot
 
 		public async Task Disconnect()
 		{
+			// Cancel all in-process tasks.
+			cancellationSource.Cancel();
+
+			// Wait for all tasks to finish cancelling.
+			await Task.WhenAll(handlerTasks);
+
 			// Say goodbye to each of the channels the bot is a member of.
 			foreach (var channel in channels.Values.Where(c => !c.IsPrivate && c.IsMember))
 				await SendMessage(channel, RandomMessages.Goodbye());
@@ -195,6 +202,7 @@ namespace SimpleSlackBot
 		}
 
 		CancellationTokenSource cancellationSource = new CancellationTokenSource();
+		ConcurrentBag<Task> handlerTasks = new ConcurrentBag<Task>();
 		async Task Handle(MessageEvent message)
 		{
 			var channelID = message.Message?.ChannelID ?? message.ChannelID;
@@ -215,14 +223,22 @@ namespace SimpleSlackBot
 
 			foreach (var handler in handlers)
 			{
-				try
-				{
-					await handler.OnMessage(channels[channelID], users[userID], text, cancellationSource.Token);
-				}
-				catch (Exception ex)
-				{
-					await SendMessage(channels[channelID], ex.ToString());
-				}
+				handlerTasks.Add(SendMessageToHandlerAsync(channelID, userID, text, handler));
+			}
+
+			// TODO: CompletedTask (4.6).
+			await Task.FromResult(true);
+		}
+
+		async Task SendMessageToHandlerAsync(string channelID, string userID, string text, Handler handler)
+		{
+			try
+			{
+				await handler.OnMessage(channels[channelID], users[userID], text, cancellationSource.Token);
+			}
+			catch (Exception ex)
+			{
+				await SendMessage(channels[channelID], ex.ToString());
 			}
 		}
 
