@@ -23,19 +23,19 @@ namespace TestBot
 				new SlowEchoHandler(),
 			};
 
-			RunSlackBotAsync(handlers).Wait();
-			//RunConsoleBot(handlers);
+			//RunSlackBotAsync(handlers).Wait();
+			RunConsoleBot(handlers);
 		}
 
-		//static void RunConsoleBot(Handler[] handlers)
-		//{
-		//	var bot = new ConsoleBot();
+		static void RunConsoleBot(Handler[] handlers)
+		{
+			var bot = new ConsoleBot();
 
-		//	foreach (var handler in handlers)
-		//		bot.RegisterHandler(handler);
+			foreach (var handler in handlers)
+				bot.RegisterHandler(handler);
 
-		//	bot.HandleInput();
-		//}
+			bot.HandleInput();
+		}
 
 		static async Task RunSlackBotAsync(Handler[] handlers)
 		{

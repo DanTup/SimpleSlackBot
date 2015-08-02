@@ -15,6 +15,14 @@ namespace SimpleSlackBot
 
 		internal override Task SendMessage(Channel channel, string text, Attachment[] attachments)
 		{
+			Console.ForegroundColor = ConsoleColor.Cyan;
+			Console.WriteLine(text);
+			if (attachments != null && attachments.Any())
+			{
+				Console.WriteLine("+ ATTACHMENTS");
+			}
+			Console.ResetColor();
+
 			// TODO: .CompletedTask (4.6).
 			return Task.FromResult(true);
 		}
@@ -30,6 +38,7 @@ namespace SimpleSlackBot
 			while (true)
 			{
 				var text = Console.ReadLine();
+				Console.WriteLine();
 
 				HandleRecievedMessage(consoleChannel, consoleUser, text);
 			}
