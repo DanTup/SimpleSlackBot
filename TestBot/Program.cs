@@ -10,8 +10,11 @@ namespace TestBot
 	{
 		static void Main(string[] args)
 		{
-			var fbUrl = Environment.GetEnvironmentVariable("SLACK_BOT_FB_URL", EnvironmentVariableTarget.User);
-			var fbToken = Environment.GetEnvironmentVariable("SLACK_BOT_FB_TOKEN", EnvironmentVariableTarget.User);
+			/* REPLACE THESE VALUES WITH YOUR OWN */
+			var useSlackBot = false; // Set to true to use real Slack bot, rather than console.
+            var slackToken = Environment.GetEnvironmentVariable("SLACK_BOT", EnvironmentVariableTarget.User); // Slack bot access token.
+			var fbUrl = Environment.GetEnvironmentVariable("SLACK_BOT_FB_URL", EnvironmentVariableTarget.User); // FogBugz installation url.
+			var fbToken = Environment.GetEnvironmentVariable("SLACK_BOT_FB_TOKEN", EnvironmentVariableTarget.User); // FogBugz access token.
 
 			var handlers = new Handler[]
 			{
@@ -21,8 +24,17 @@ namespace TestBot
 				new SlowEchoHandler(),
 			};
 
-			//RunSlackBotAsync(handlers).Wait();
-			RunConsoleBot(handlers);
+			if (useSlackBot)
+				RunSlackBotAsync(slackToken, handlers).Wait();
+			else
+			{
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine("Using ConsoleBot by default. Please edit the values at the top of Program.cs to connect to a real Slack instance.");
+				Console.WriteLine("Type 'quit' to quit.");
+				Console.ResetColor();
+				Console.WriteLine();
+				RunConsoleBot(handlers);
+			}
 		}
 
 		static void RunConsoleBot(Handler[] handlers)
@@ -35,11 +47,10 @@ namespace TestBot
 			bot.HandleInput();
 		}
 
-		static async Task RunSlackBotAsync(Handler[] handlers)
+		static async Task RunSlackBotAsync(string token, Handler[] handlers)
 		{
 			Debug.Listeners.Add(new ConsoleTraceListener());
-			var token = Environment.GetEnvironmentVariable("SLACK_BOT", EnvironmentVariableTarget.User);
-
+			
 			using (var bot = await SlackBot.Connect(token))
 			{
 				foreach (var handler in handlers)
