@@ -19,7 +19,19 @@ namespace SimpleSlackBot
 			Console.WriteLine(text);
 			if (attachments != null && attachments.Any())
 			{
-				Console.WriteLine("+ ATTACHMENTS");
+				foreach (var attachment in attachments)
+				{
+					if (!string.IsNullOrEmpty(attachment.Pretext))
+						Console.WriteLine(attachment.Pretext);
+					if (!string.IsNullOrEmpty(attachment.AuthorName))
+						Console.WriteLine(attachment.AuthorName);
+					Console.WriteLine($"{attachment.Title} <{attachment.TitleLink}>");
+					if (!string.IsNullOrEmpty(attachment.Text))
+						Console.WriteLine(attachment.Text);
+					foreach (var field in attachment.Fields)
+						Console.WriteLine($"{field.Title}: {field.Value}");
+					Console.WriteLine();
+				}
 			}
 			Console.ResetColor();
 
@@ -35,10 +47,18 @@ namespace SimpleSlackBot
 
 		public void HandleInput()
 		{
+			SayHello(consoleChannel).Wait();
+
 			while (true)
 			{
 				var text = Console.ReadLine();
 				Console.WriteLine();
+
+				if (string.Equals(text, "quit"))
+				{
+					SayGoodbye(consoleChannel).Wait();
+					break;
+				}
 
 				HandleRecievedMessage(consoleChannel, consoleUser, text);
 			}

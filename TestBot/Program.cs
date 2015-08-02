@@ -10,8 +10,6 @@ namespace TestBot
 	{
 		static void Main(string[] args)
 		{
-
-
 			var fbUrl = Environment.GetEnvironmentVariable("SLACK_BOT_FB_URL", EnvironmentVariableTarget.User);
 			var fbToken = Environment.GetEnvironmentVariable("SLACK_BOT_FB_TOKEN", EnvironmentVariableTarget.User);
 
