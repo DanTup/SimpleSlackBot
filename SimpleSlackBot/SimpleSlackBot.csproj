@@ -49,6 +49,7 @@
     <Compile Include="Api\PostMessageResponse.cs" />
     <Compile Include="Api\TypingIndicator.cs" />
     <Compile Include="Bot.cs" />
+    <Compile Include="ConsoleBot.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomMessages.cs" />

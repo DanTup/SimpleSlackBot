@@ -10,23 +10,42 @@ namespace TestBot
 	{
 		static void Main(string[] args)
 		{
-			Debug.Listeners.Add(new ConsoleTraceListener());
 
-			MainAsync(args).Wait();
-		}
 
-		static async Task MainAsync(string[] args)
-		{
-			var token = Environment.GetEnvironmentVariable("SLACK_BOT", EnvironmentVariableTarget.User);
 			var fbUrl = Environment.GetEnvironmentVariable("SLACK_BOT_FB_URL", EnvironmentVariableTarget.User);
 			var fbToken = Environment.GetEnvironmentVariable("SLACK_BOT_FB_TOKEN", EnvironmentVariableTarget.User);
 
+			var handlers = new Handler[]
+			{
+				new EchoHandler(),
+				new CountdownHandler(),
+				new FogBugzCaseHandler(new Uri(fbUrl), fbToken),
+				new SlowEchoHandler(),
+			};
+
+			RunSlackBotAsync(handlers).Wait();
+			//RunConsoleBot(handlers);
+		}
+
+		//static RunConsoleBot(Handler[] handlers)
+		//{
+		//	var bot = new ConsoleBot();
+
+		//	foreach (var handler in handlers)
+		//		bot.RegisterHandler(handler);
+
+		//	bot.HandleInput();
+		//}
+
+		static async Task RunSlackBotAsync(Handler[] handlers)
+		{
+			Debug.Listeners.Add(new ConsoleTraceListener());
+			var token = Environment.GetEnvironmentVariable("SLACK_BOT", EnvironmentVariableTarget.User);
+
 			using (var bot = await Bot.Connect(token))
 			{
-				bot.RegisterHandler(new EchoHandler());
-				bot.RegisterHandler(new CountdownHandler());
-				bot.RegisterHandler(new FogBugzCaseHandler(new Uri(fbUrl), fbToken));
-				bot.RegisterHandler(new SlowEchoHandler());
+				foreach (var handler in handlers)
+					bot.RegisterHandler(handler);
 
 				Console.WriteLine("Press a key to disconnect...");
 				Console.ReadKey();
