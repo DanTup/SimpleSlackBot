@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -29,7 +28,7 @@ namespace TestBot.Handlers
 			this.token = token;
 		}
 
-		public async override Task OnMessage(Channel channel, User user, string text)
+		public async override Task OnMessage(Channel channel, User user, string text, bool botIsMentioned)
 		{
 			// Check the message for a case reference.
 			var match = Regex.Match(text, @"(?:fogbugz|fb|case|bug|feature|issue) (\d+)", RegexOptions.IgnoreCase);
@@ -58,7 +57,7 @@ namespace TestBot.Handlers
 					AuthorName = c.IsOpen ? c.AssignedTo : null,
 					AuthorIcon = new Uri(url, $"default.asp?ixPerson={c.ixAssignedTo}&pg=pgAvatar&pxSize=16").AbsoluteUri,
 					Colour = c.ixPriority <= 2 ? "danger" : "warning",
-                    Fields = new[]
+					Fields = new[]
 					{
 						new Field(c.Status, c.Category),
 						new Field($"{c.Project} {c.Area}", "FixFor: " + c.Milestone)
@@ -94,7 +93,7 @@ namespace TestBot.Handlers
 				Title = caseXml.Element("sTitle").Value,
 				Status = caseXml.Element("sStatus").Value,
 				ixPriority = int.Parse(caseXml.Element("ixPriority").Value),
-                IsOpen = bool.Parse(caseXml.Element("fOpen").Value),
+				IsOpen = bool.Parse(caseXml.Element("fOpen").Value),
 				Category = caseXml.Element("sCategory").Value,
 				Project = caseXml.Element("sProject").Value,
 				Area = caseXml.Element("sArea").Value,
@@ -104,7 +103,7 @@ namespace TestBot.Handlers
 				LatestText = caseXml.Element("sLatestTextSummary").Value,
 			};
 		}
-		
+
 		class Case
 		{
 			public int CaseNumber { get; set; }

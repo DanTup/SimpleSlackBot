@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using SimpleSlackBot;
 using TestBot.Handlers;
@@ -12,7 +13,7 @@ namespace TestBot
 		{
 			/* REPLACE THESE VALUES WITH YOUR OWN */
 			var useSlackBot = false; // Set to true to use real Slack bot, rather than console.
-            var slackToken = Environment.GetEnvironmentVariable("SLACK_BOT", EnvironmentVariableTarget.User); // Slack bot access token.
+			var slackToken = Environment.GetEnvironmentVariable("SLACK_BOT", EnvironmentVariableTarget.User); // Slack bot access token.
 			var fbUrl = Environment.GetEnvironmentVariable("SLACK_BOT_FB_URL", EnvironmentVariableTarget.User); // FogBugz installation url.
 			var fbToken = Environment.GetEnvironmentVariable("SLACK_BOT_FB_TOKEN", EnvironmentVariableTarget.User); // FogBugz access token.
 
@@ -22,9 +23,10 @@ namespace TestBot
 				new CountdownHandler(),
 				new FogBugzCaseHandler(new Uri(fbUrl), fbToken),
 				new SlowEchoHandler(),
+				new MentionHandler(),
 			};
 
-			if (useSlackBot)
+			if (useSlackBot || args != null && args.Contains("slack"))
 				RunSlackBotAsync(slackToken, handlers).Wait();
 			else
 			{
@@ -50,7 +52,7 @@ namespace TestBot
 		static async Task RunSlackBotAsync(string token, Handler[] handlers)
 		{
 			Debug.Listeners.Add(new ConsoleTraceListener());
-			
+
 			using (var bot = await SlackBot.Connect(token))
 			{
 				foreach (var handler in handlers)

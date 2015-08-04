@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Handlers\CountdownHandler.cs" />
+    <Compile Include="Handlers\MentionHandler.cs" />
     <Compile Include="Handlers\SlowEchoHandler.cs" />
     <Compile Include="Handlers\EchoHandler.cs" />
     <Compile Include="ConsoleTraceListener.cs" />

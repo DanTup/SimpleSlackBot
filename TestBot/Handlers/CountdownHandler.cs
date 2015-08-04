@@ -7,7 +7,7 @@ namespace TestBot.Handlers
 {
 	class CountdownHandler : Handler
 	{
-		public override async Task OnMessage(Channel channel, User user, string text, CancellationToken cancellationToken)
+		public override async Task OnMessage(Channel channel, User user, string text, bool botIsMentioned, CancellationToken cancellationToken)
 		{
 			if (!string.Equals(text, "countdown", StringComparison.OrdinalIgnoreCase))
 				return;

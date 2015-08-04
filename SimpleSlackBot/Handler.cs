@@ -17,16 +17,16 @@ namespace SimpleSlackBot
 			this.bot = bot;
 		}
 
-		public virtual Task OnMessage(Channel channel, User user, string text)
+		public virtual Task OnMessage(Channel channel, User user, string text, bool botIsMentioned)
 		{
 			// TODO:.NET 4.6.
 			//return Task.CompletedTask;
 			return Task.FromResult(true);
 		}
 
-		public virtual Task OnMessage(Channel channel, User user, string text, CancellationToken cancellationToken)
+		public virtual Task OnMessage(Channel channel, User user, string text, bool botIsMentioned, CancellationToken cancellationToken)
 		{
-			return OnMessage(channel, user, text);
+			return OnMessage(channel, user, text, botIsMentioned);
 		}
 
 		protected async Task SendMessage(Channel channel, string text, Attachment[] attachments = null)
@@ -46,7 +46,7 @@ namespace SimpleSlackBot
 		{
 			// https://api.slack.com/docs/formatting
 			return (input?.ToString() ?? "").Replace("&", "&amp;").Replace("<", "&lt;").Replace("&", "&gt;");
-        }
+		}
 
 		protected string UrlEncode(object input)
 		{

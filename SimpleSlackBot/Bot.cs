@@ -37,7 +37,7 @@ namespace SimpleSlackBot
 		/// <summary>
 		/// Called by the bot implementation when a message is received, to be passed to handlers.
 		/// </summary>
-		protected void HandleRecievedMessage(Channel channel, User user, string text)
+		protected void HandleRecievedMessage(Channel channel, User user, string text, bool botIsMentioned)
 		{
 			// If the text is cancellation, then send a cancellation message instead.
 			if (cancellationTerms.Contains(text, StringComparer.OrdinalIgnoreCase))
@@ -48,17 +48,17 @@ namespace SimpleSlackBot
 			}
 
 			foreach (var handler in handlers)
-				handlerTasks.Add(SendMessageToHandlerAsync(channel, user, text, handler));
+				handlerTasks.Add(SendMessageToHandlerAsync(channel, user, text, botIsMentioned, handler));
 		}
 
 		/// <summary>
 		/// Used privately to pass a message on to each handler.
 		/// </summary>
-		async Task SendMessageToHandlerAsync(Channel channel, User user, string text, Handler handler)
+		async Task SendMessageToHandlerAsync(Channel channel, User user, string text, bool botIsMentioned, Handler handler)
 		{
 			try
 			{
-				await handler.OnMessage(channel, user, text, cancellationSource.Token);
+				await handler.OnMessage(channel, user, text, botIsMentioned, cancellationSource.Token);
 			}
 			catch (Exception ex)
 			{

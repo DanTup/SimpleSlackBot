@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -19,7 +18,7 @@ namespace SimpleSlackBot
 		User self;
 		readonly Dictionary<string, User> users = new Dictionary<string, User>(); // TODO: Handle new users joining/leaving
 		readonly Dictionary<string, Channel> channels = new Dictionary<string, Channel>(); // TODO: Handle new channels/deleted
-		
+
 		#region Construction
 
 		private SlackBot(string token)
@@ -128,7 +127,7 @@ namespace SimpleSlackBot
 
 				await HandleApiMessage(fullMessage.ToString());
 			}
-		}		
+		}
 
 		#region Message Handling
 
@@ -194,12 +193,14 @@ namespace SimpleSlackBot
 			if (userID == self.ID)
 				return;
 
-			HandleRecievedMessage(channels[channelID], users[userID], text);
+			var botIsMentioned = text.Contains(string.Format("<@{0}>", self.ID));
+
+			HandleRecievedMessage(channels[channelID], users[userID], text, botIsMentioned);
 
 			// TODO: CompletedTask (4.6).
 			await Task.FromResult(true);
 		}
-		
+
 		async Task HandleApiMessage(ChannelJoinedEvent message)
 		{
 			Debug.WriteLine("JOINED: " + message.Channel.Name);

@@ -8,7 +8,7 @@ namespace TestBot.Handlers
 	{
 		const string prefix = "echo ";
 
-		public override async Task OnMessage(Channel channel, User user, string text)
+		public override async Task OnMessage(Channel channel, User user, string text, bool botIsMentioned)
 		{
 			if (!text.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
 				return;

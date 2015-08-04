@@ -23,7 +23,7 @@ class EchoHandler : Handler
 {
 	const string prefix = "echo ";
 
-	public override async Task OnMessage(Channel channel, User user, string text)
+	public override async Task OnMessage(Channel channel, User user, string text, bool botIsMentioned)
 	{
 		if (!text.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
 			return;
@@ -53,7 +53,7 @@ It's possible to make your handler support having commands cancelled. An optiona
 ```csharp
 class CountdownHandler : Handler
 {
-	public override async Task OnMessage(Channel channel, User user, string text, CancellationToken cancellationToken)
+	public override async Task OnMessage(Channel channel, User user, string text, bool botIsMentioned, CancellationToken cancellationToken)
 	{
 		if (!string.Equals(text, "countdown", StringComparison.OrdinalIgnoreCase))
 			return;
@@ -93,3 +93,4 @@ There are a couple of sample bot handlers in the TestBot project that might help
 - [Slow Echo Handler (shows editing messages)](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/CountdownHandler.cs)
 - [Countdown Handler (shows 'typing...')](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/SlowEchoHandler.cs)
 - [FogBugz Case Handler](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/FogBugzCaseHandler.cs)
+- [Mention Handler (responds only when mentioned)](https://github.com/DanTup/SimpleSlackBot/blob/master/TestBot/Handlers/MentionHandler.cs)
