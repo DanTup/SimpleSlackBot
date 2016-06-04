@@ -1,3 +1,5 @@
+NOTE: This software is not being actively developed or maintained.
+
 # Simple Slack Bot
 
 A simple library for creating [Slack bots](https://api.slack.com/bot-users) in C#.
