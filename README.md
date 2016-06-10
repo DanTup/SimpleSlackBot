@@ -1,6 +1,6 @@
 > NOTE: This software is not being actively developed or maintained.
 
-# Simple Slack Bot
+# Simple Slack Bot [![Build status](https://ci.appveyor.com/api/projects/status/github/DanTup/SimpleSlackBot?svg=true)](https://ci.appveyor.com/project/DanTup/simpleslackbot)
 
 A simple library for creating [Slack bots](https://api.slack.com/bot-users) in C#.
 
